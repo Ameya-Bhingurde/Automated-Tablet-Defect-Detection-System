@@ -51,7 +51,8 @@ results/*.json
 !results/.gitkeep
 
 # Streamlit
-.streamlit/
+.streamlit/secrets.toml
+.streamlit/cache/
 
 # Logs
 *.log

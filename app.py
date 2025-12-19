@@ -26,9 +26,32 @@ def load_model():
     
     # Load PaDiM model
     model_path = config.MODEL_DIR / "padim_model.pkl"
+    
+    # Auto-train model if not found (for first deployment)
     if not model_path.exists():
-        st.error(f"❌ Model not found at {model_path}. Please run train.py first.")
-        st.stop()
+        st.warning("⚠️ Model not found. Training model for the first time... This may take 2-3 minutes.")
+        
+        try:
+            from train import train_padim
+            import streamlit as st
+            
+            # Show progress
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+            
+            status_text.text("Training PaDiM model...")
+            progress_bar.progress(50)
+            
+            # Train the model
+            train_padim()
+            
+            progress_bar.progress(100)
+            status_text.text("✅ Model training complete!")
+            st.success("Model trained successfully! Reloading...")
+            
+        except Exception as e:
+            st.error(f"❌ Failed to train model: {e}")
+            st.stop()
     
     padim_model = PaDiM()
     padim_model.load(model_path)
