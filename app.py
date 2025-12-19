@@ -19,6 +19,29 @@ from src.padim import PaDiM
 from src.visualize import apply_heatmap
 
 
+def train_model_if_needed():
+    """Train model if it doesn't exist (called before caching)"""
+    model_path = config.MODEL_DIR / "padim_model.pkl"
+    
+    if not model_path.exists():
+        st.warning("⚠️ Model not found. Training for the first time (~2-3 minutes)...")
+        
+        try:
+            # Import here to avoid circular dependency
+            from train import train_padim
+            
+            with st.spinner("🤖 Training PaDiM model..."):
+                train_padim()
+            
+            st.success("✅ Model trained successfully!")
+            st.balloons()
+            
+        except Exception as e:
+            st.error(f"❌ Training failed: {str(e)}")
+            st.error("Please check logs and ensure training data exists in capsule/train/good/")
+            st.stop()
+
+
 @st.cache_resource
 def load_model():
     """Load PaDiM model and feature extractor (cached)"""
@@ -27,31 +50,8 @@ def load_model():
     # Load PaDiM model
     model_path = config.MODEL_DIR / "padim_model.pkl"
     
-    # Auto-train model if not found (for first deployment)
     if not model_path.exists():
-        st.warning("⚠️ Model not found. Training model for the first time... This may take 2-3 minutes.")
-        
-        try:
-            from train import train_padim
-            import streamlit as st
-            
-            # Show progress
-            progress_bar = st.progress(0)
-            status_text = st.empty()
-            
-            status_text.text("Training PaDiM model...")
-            progress_bar.progress(50)
-            
-            # Train the model
-            train_padim()
-            
-            progress_bar.progress(100)
-            status_text.text("✅ Model training complete!")
-            st.success("Model trained successfully! Reloading...")
-            
-        except Exception as e:
-            st.error(f"❌ Failed to train model: {e}")
-            st.stop()
+        raise FileNotFoundError(f"Model not found at {model_path}")
     
     padim_model = PaDiM()
     padim_model.load(model_path)
@@ -190,6 +190,9 @@ def main():
         - 📈 Anomaly score quantification
         - 🚀 CPU-friendly inference
         """)
+    
+    # Train model if needed (first deployment)
+    train_model_if_needed()
     
     # Load model
     with st.spinner("Loading model..."):
