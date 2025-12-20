@@ -3,8 +3,10 @@ title: Tablet Defect Detection
 emoji: 💊
 colorFrom: blue
 colorTo: red
-sdk: docker
-app_port: 7860
+sdk: streamlit
+sdk_version: "1.25.0"
+app_file: app.py
+pinned: false
 ---
 
 # 💊 Automated Tablet Defect Detection System
