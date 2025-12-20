@@ -139,10 +139,10 @@ def main():
         threshold = st.slider(
             "Anomaly Threshold",
             min_value=0.0,
-            max_value=2.0,
-            value=0.5,
-            step=0.05,
-            help="Adjust sensitivity: lower = more sensitive to defects"
+            max_value=30.0,
+            value=15.0,
+            step=0.5,
+            help="Adjust sensitivity: lower = more sensitive to defects (typical range: 10-20)"
         )
         
         show_heatmap = st.checkbox("Show Anomaly Heatmap", value=True)
@@ -169,6 +169,9 @@ def main():
         - 📈 Anomaly score quantification
         - 🚀 CPU-friendly inference
         """)
+        
+        st.divider()
+        st.warning("⚠️ **Model Limitation:** This model is trained specifically on the Actavis 500mg capsule dataset. It will NOT work accurately on other tablet/capsule types, shapes, or colors.")
     
     
     # Load model
@@ -191,12 +194,18 @@ def main():
         use_demo = st.button("🎲 Try Demo Image")
     
     if use_demo:
-        # Load a random test image
-        demo_dir = config.TEST_DIR / "good"
-        demo_images = list(demo_dir.glob("*.png"))
-        if demo_images:
-            demo_path = np.random.choice(demo_images)
-            uploaded_file = demo_path
+        # Load a random test image from specific defect types only
+        demo_categories = ["squeeze", "poke", "crack"]
+        demo_category = np.random.choice(demo_categories)
+        demo_dir = config.TEST_DIR / demo_category
+        
+        if demo_dir.exists():
+            demo_images = list(demo_dir.glob("*.png"))
+            if demo_images:
+                demo_path = np.random.choice(demo_images)
+                uploaded_file = demo_path
+        else:
+            st.error(f"Demo category '{demo_category}' not found.")
     
     if uploaded_file is not None:
         # Load image
@@ -323,20 +332,18 @@ def main():
         st.divider()
         st.subheader("📚 Example Defect Types")
         
-        cols = st.columns(5)
+        cols = st.columns(3)
         defect_examples = {
-            "Normal": config.TEST_DIR / "good",
-            "Crack": config.TEST_DIR / "crack",
+            "Squeeze": config.TEST_DIR / "squeeze",
             "Poke": config.TEST_DIR / "poke",
-            "Scratch": config.TEST_DIR / "scratch",
-            "Squeeze": config.TEST_DIR / "squeeze"
+            "Crack": config.TEST_DIR / "crack"
         }
         
         for idx, (defect_name, defect_dir) in enumerate(defect_examples.items()):
             if defect_dir.exists():
                 images = list(defect_dir.glob("*.png"))
                 if images:
-                    with cols[idx % 5]:
+                    with cols[idx % 3]:
                         example_img = Image.open(images[0])
                         st.image(example_img, caption=defect_name, use_column_width=True)
 

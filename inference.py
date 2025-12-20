@@ -19,7 +19,7 @@ from src.visualize import save_prediction
 
 def predict_single_image(image_path: str, 
                          model_path: str = None,
-                         threshold: float = 0.5,
+                         threshold: float = 15.0,
                          save_result: bool = True) -> dict:
     """
     Run inference on a single image
@@ -121,8 +121,8 @@ def main():
     parser.add_argument(
         '--threshold',
         type=float,
-        default=0.5,
-        help='Anomaly threshold (default: 0.5)'
+        default=15.0,
+        help='Anomaly threshold for Mahalanobis distance (default: 15.0)'
     )
     parser.add_argument(
         '--no-save',

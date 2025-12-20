@@ -33,7 +33,7 @@ REDUCE_DIM = 100  # Dimensionality reduction via random projection
 EPSILON = 1e-5    # Numerical stability for covariance matrix
 
 # ===================== INFERENCE CONFIGURATION =====================
-ANOMALY_THRESHOLD = 0.5  # Decision threshold (tunable)
+ANOMALY_THRESHOLD = 15.0  # Decision threshold for Mahalanobis distance (tunable)
 HEATMAP_COLORMAP = "jet"  # Colormap for visualization
 HEATMAP_ALPHA = 0.4      # Overlay transparency
 
