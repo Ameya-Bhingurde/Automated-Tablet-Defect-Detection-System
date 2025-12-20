@@ -1,3 +1,12 @@
+---
+title: Tablet Defect Detection
+emoji: 💊
+colorFrom: blue
+colorTo: red
+sdk: docker
+app_port: 7860
+---
+
 # 💊 Automated Tablet Defect Detection System
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
