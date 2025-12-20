@@ -209,7 +209,7 @@ def main():
         st.subheader("📸 Uploaded Image")
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            st.image(image, use_container_width=True)
+            st.image(image, use_column_width=True)
         
         # Run inference
         with st.spinner("🔍 Analyzing image..."):
@@ -281,11 +281,11 @@ def main():
             col1, col2 = st.columns(2)
             
             with col1:
-                st.image(image, caption="Original", use_container_width=True)
+                st.image(image, caption="Original", use_column_width=True)
             
             with col2:
                 st.image(heatmap_overlay, caption="Defect Localization", 
-                        use_container_width=True)
+                        use_column_width=True)
         
         # Download results
         st.divider()
@@ -338,7 +338,7 @@ def main():
                 if images:
                     with cols[idx % 5]:
                         example_img = Image.open(images[0])
-                        st.image(example_img, caption=defect_name, use_container_width=True)
+                        st.image(example_img, caption=defect_name, use_column_width=True)
 
 
 if __name__ == "__main__":
