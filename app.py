@@ -19,37 +19,6 @@ from src.padim import PaDiM
 from src.visualize import apply_heatmap
 
 
-def train_model_if_needed():
-    """Train model if it doesn't exist (called before caching)"""
-    import streamlit as st
-    from pathlib import Path
-    import config
-    
-    model_path = config.MODEL_DIR / "padim_model.pkl"
-    
-    if model_path.exists():
-        return  # Model already trained
-    
-    st.warning("⚠️ Model not found. Training for the first time (~2-3 minutes)...")
-    
-    try:
-        # Import training function
-        from train import train_padim
-        
-        # Train with spinner
-        with st.spinner("🤖 Training PaDiM model..."):
-            train_padim()
-        
-        # Success feedback
-        st.success("✅ Model trained successfully!")
-        st.balloons()
-        
-    except Exception as e:
-        st.error(f"❌ Training failed: {str(e)}")
-        st.error("Please check logs and ensure training data exists in capsule/train/good/")
-        st.stop()
-
-
 @st.cache_resource
 def load_model():
     """Load PaDiM model and feature extractor (cached)"""
@@ -59,7 +28,9 @@ def load_model():
     model_path = config.MODEL_DIR / "padim_model.pkl"
     
     if not model_path.exists():
-        raise FileNotFoundError(f"Model not found at {model_path}")
+        st.error("❌ Model file not found. Please train the model first.")
+        st.info("To train the model, run: `python train.py` in your terminal")
+        st.stop()
     
     padim_model = PaDiM()
     padim_model.load(model_path)
@@ -199,8 +170,6 @@ def main():
         - 🚀 CPU-friendly inference
         """)
     
-    # Train model if needed (first deployment)
-    train_model_if_needed()
     
     # Load model
     with st.spinner("Loading model..."):
